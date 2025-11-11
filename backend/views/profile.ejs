@@ -1,0 +1,79 @@
+<h2 style="
+    text-align: center; 
+    margin-top: 40px; 
+    margin-bottom: 35px; 
+    color: #fff; 
+    letter-spacing: 1px; 
+    font-family: 'Segoe UI', sans-serif;
+">
+    Your Profile
+</h2>
+
+<div style="
+    max-width: 600px; 
+    margin: 0 auto; 
+    background: rgba(255, 255, 255, 0.05); 
+    padding: 45px 40px; 
+    border-radius: 15px; 
+    box-shadow: 0 4px 25px rgba(0,0,0,0.4); 
+    color: #fff; 
+    font-family: 'Segoe UI', sans-serif; 
+    line-height: 1.8; 
+    animation: fadeIn 0.8s ease-in-out;
+">
+
+    <div style="margin-bottom: 25px;">
+        <p style="margin-bottom: 12px; font-size: 16px;"><strong>Name:</strong> <%= user.username %></p>
+        <p style="margin-bottom: 12px; font-size: 16px;"><strong>Email:</strong> <%= user.email %></p>
+    </div>
+
+    <% if (user.total_expenses || user.monthly_budget) { %>
+        <hr style="border: none; height: 1px; background: rgba(255,255,255,0.1); margin: 25px 0;">
+        <% if (user.total_expenses) { %>
+            <p style="margin-bottom: 12px; font-size: 16px;"><strong>Total Expenses:</strong> $<%= user.total_expenses %></p>
+        <% } %>
+        <% if (user.monthly_budget) { %>
+            <p style="margin-bottom: 12px; font-size: 16px;"><strong>Monthly Budget:</strong> $<%= user.monthly_budget %></p>
+        <% } %>
+    <% } %>
+
+    <div style="margin-top: 35px; text-align: center; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+        <a href="/expenses/dashboard" style="
+            padding: 12px 28px; 
+            background: linear-gradient(135deg, #36A2EB, #1f7ac3); 
+            color: white; 
+            border-radius: 8px; 
+            text-decoration: none; 
+            font-weight: 600; 
+            transition: all 0.3s ease;
+            font-size: 15px;
+        ">
+            Go to Dashboard
+        </a>
+
+        <a href="/budget" style="
+            padding: 12px 28px; 
+            background: linear-gradient(135deg, #36EB83, #1fa35f); 
+            color: white; 
+            border-radius: 8px; 
+            text-decoration: none; 
+            font-weight: 600; 
+            transition: all 0.3s ease;
+            font-size: 15px;
+        ">
+            Set Budget
+        </a>
+    </div>
+</div>
+
+<style>
+@keyframes fadeIn {
+  from {opacity: 0; transform: translateY(20px);}
+  to {opacity: 1; transform: translateY(0);}
+}
+
+a:hover {
+  opacity: 0.9;
+  transform: scale(1.03);
+}
+</style>

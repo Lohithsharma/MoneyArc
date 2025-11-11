@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Financial Manager</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* General body styling */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #1f1f2e, #3c3c52);
+            color: #fff;
+        }
+
+        /* Header styling */
+        header {
+            background: linear-gradient(90deg, #36A2EB, #1f7ac3);
+            color: white;
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 26px;
+            letter-spacing: 1px;
+        }
+
+        header nav a {
+            color: white;
+            margin-left: 20px;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 8px 15px;
+            border-radius: 25px;
+            transition: 0.3s;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        header nav a:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+
+        /* Main content area */
+        main {
+            padding: 40px 20px;
+            min-height: calc(100vh - 140px); /* header + footer */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Footer styling */
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: #2c2c44;
+            font-size: 14px;
+            color: #bbb;
+            box-shadow: 0 -4px 8px rgba(0,0,0,0.3);
+        }
+
+        /* Links for login/register when user is not logged in */
+        .auth-links a {
+            margin: 0 10px;
+            padding: 10px 25px;
+            border-radius: 25px;
+            background: linear-gradient(135deg, #36A2EB, #1f7ac3);
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .auth-links a:hover {
+            background: linear-gradient(135deg, #1f7ac3, #36A2EB);
+            transform: scale(1.05);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            header nav {
+                margin-top: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>MoneyArc</h1>
+    <nav>
+        <% if(session.userId){ %>
+            <a href="/expenses/dashboard">Dashboard</a>
+            <a href="/profile">Profile</a>
+            <a href="/budget">Budget</a>
+            <a href="/logout">Logout</a>
+        <% } else { %>
+            <div class="auth-links">
+                <a href="/login">Login</a>
+                <a href="/register">Register</a>
+            </div>
+        <% } %>
+    </nav>
+</header>
+
+<main>
+    <%- body %>
+</main>
+
+<footer>
+    &copy; 2025 Financial Management System
+</footer>
+
+</body>
+</html>

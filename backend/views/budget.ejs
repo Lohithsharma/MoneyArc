@@ -1,0 +1,107 @@
+<h2>Budget Setup</h2>
+
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+        background: url('/images/dark-finance-bg.jpg') no-repeat center center fixed;
+        background-size: cover;
+        color: #fff;
+        margin: 0;
+        padding: 20px;
+    }
+
+    h2, h3 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #f0f0f0;
+        text-shadow: 1px 1px 3px #000;
+    }
+
+    form {
+        max-width: 600px;
+        margin: 0 auto 40px auto;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        background: rgba(0,0,0,0.7);
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    }
+
+    form input, form button {
+        padding: 12px;
+        font-size: 14px;
+        border-radius: 8px;
+        border: none;
+        outline: none;
+    }
+
+    form input {
+        flex: 1 1 45%;
+        background: rgba(255,255,255,0.1);
+        color: #fff;
+    }
+
+    form input::placeholder {
+        color: #ccc;
+    }
+
+    form button {
+        flex: 1 1 100%;
+        background-color: #1abc9c;
+        color: #fff;
+        cursor: pointer;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+
+    form button:hover {
+        background-color: #16a085;
+    }
+
+    table {
+        width: 90%;
+        margin: 0 auto;
+        border-collapse: collapse;
+        background: rgba(0,0,0,0.7);
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    }
+
+    table th, table td {
+        padding: 14px;
+        text-align: center;
+        border-bottom: 1px solid rgba(255,255,255,0.2);
+        color: #fff;
+    }
+
+    table th {
+        background-color: #1abc9c;
+    }
+
+    table tr:hover {
+        background: rgba(255,255,255,0.1);
+    }
+</style>
+
+<form action="/budget/save" method="POST">
+    <input type="text" name="category" placeholder="Category" required>
+    <input type="number" name="amount" placeholder="Monthly Budget" required>
+    <button type="submit">Save</button>
+</form>
+
+<h3>Your Budgets</h3>
+<table>
+<tr>
+    <th>Category</th>
+    <th>Amount</th>
+</tr>
+<% budget.forEach(b => { %>
+<tr>
+    <td><%= b.category %></td>
+    <td>$<%= b.amount %></td>
+</tr>
+<% }) %>
+</table>

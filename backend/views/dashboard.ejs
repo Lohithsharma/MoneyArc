@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Financial Dashboard</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: url('/images/dark-finance-bg.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: #fff;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h2, h3 {
+            text-align: center;
+            color: #f0f0f0;
+            text-shadow: 1px 1px 4px #000;
+            margin-bottom: 20px;
+        }
+
+        form {
+            max-width: 700px;
+            margin: 20px auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+
+        form input, form button {
+            padding: 12px;
+            font-size: 14px;
+            border-radius: 8px;
+            border: none;
+            outline: none;
+        }
+
+        form input {
+            flex: 1 1 45%;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        form input::placeholder {
+            color: #ccc;
+        }
+
+        form button {
+            flex: 1 1 100%;
+            background-color: #1abc9c;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        form button:hover {
+            background-color: #16a085;
+        }
+
+        table {
+            width: 90%;
+            margin: 30px auto;
+            border-collapse: collapse;
+            background: rgba(0,0,0,0.7);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+
+        table th, table td {
+            padding: 14px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            color: #fff;
+        }
+
+        table th {
+            background-color: #1abc9c;
+        }
+
+        table tr:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        ul.recommendations {
+            max-width: 700px;
+            margin: 20px auto;
+            background: rgba(0,0,0,0.7);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+
+        ul.recommendations li {
+            margin-bottom: 12px;
+            padding: 10px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+        }
+
+        .chart-container {
+            width: 450px;
+            height: 450px;
+            margin: 40px auto;
+            background: rgba(0,0,0,0.7);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Your Dashboard</h2>
+
+    <!-- Add Expense Form -->
+    <form action="/expenses/add" method="POST">
+        <input type="number" name="amount" placeholder="Amount" required>
+        <input type="text" name="category" placeholder="Category" required>
+        <input type="date" name="date" required>
+        <input type="text" name="description" placeholder="Description">
+        <button type="submit">Add Expense</button>
+    </form>
+
+    <!-- Expenses Table -->
+    <h3>Expenses</h3>
+    <table>
+        <tr>
+            <th>Amount</th>
+            <th>Category</th>
+            <th>Date</th>
+            <th>Description</th>
+        </tr>
+        <% expenses.forEach(e => { %>
+        <tr>
+            <td><%= e.amount %></td>
+            <td><%= e.category %></td>
+            <td><%= new Date(e.date).toISOString().split('T')[0] %></td>
+            <td><%= e.description %></td>
+        </tr>
+        <% }) %>
+    </table>
+
+    <!-- AI Recommendations -->
+    <h3>AI Recommendations</h3>
+    <ul class="recommendations">
+        <% recommendations.forEach(r => { %>
+        <li><%= r %></li>
+        <% }) %>
+    </ul>
+
+    <!-- Category-wise Chart -->
+    <h3>Category-wise Expenses</h3>
+    <div class="chart-container">
+        <canvas id="categoryChart"></canvas>
+    </div>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/js/charts.js"></script>
+    <script>
+        renderCategoryChart('categoryChart', <%- JSON.stringify(summary) %>);
+    </script>
+
+</body>
+</html>
