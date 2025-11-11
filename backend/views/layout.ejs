@@ -1,127 +1,207 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Financial Manager</title>
-    <link rel="stylesheet" href="/css/style.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        /* General body styling */
-        body {
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 0;
-            background: linear-gradient(135deg, #1f1f2e, #3c3c52);
-            color: #fff;
-        }
+  <meta charset="UTF-8">
+  <title>Financial Manager</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-        /* Header styling */
-        header {
-            background: linear-gradient(90deg, #36A2EB, #1f7ac3);
-            color: white;
-            padding: 15px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-        }
+  <style>
+    /* General body styling */
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #1f1f2e, #3c3c52);
+      color: #fff;
+    }
 
-        header h1 {
-            margin: 0;
-            font-size: 26px;
-            letter-spacing: 1px;
-        }
+    /* Header styling */
+    header {
+      background: linear-gradient(90deg, #36A2EB, #1f7ac3);
+      color: white;
+      padding: 15px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      position: relative;
+      z-index: 100;
+    }
 
-        header nav a {
-            color: white;
-            margin-left: 20px;
-            text-decoration: none;
-            font-weight: bold;
-            padding: 8px 15px;
-            border-radius: 25px;
-            transition: 0.3s;
-            background: rgba(255, 255, 255, 0.1);
-        }
+    header h1 {
+      margin: 0;
+      font-size: 26px;
+      letter-spacing: 1px;
+    }
 
-        header nav a:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: scale(1.05);
-        }
+    header nav {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
 
-        /* Main content area */
-        main {
-            padding: 40px 20px;
-            min-height: calc(100vh - 140px); /* header + footer */
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+    header nav a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      padding: 8px 15px;
+      border-radius: 25px;
+      transition: 0.3s;
+      background: rgba(255, 255, 255, 0.1);
+    }
 
-        /* Footer styling */
-        footer {
-            text-align: center;
-            padding: 20px;
-            background: #2c2c44;
-            font-size: 14px;
-            color: #bbb;
-            box-shadow: 0 -4px 8px rgba(0,0,0,0.3);
-        }
+    header nav a:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: scale(1.05);
+    }
 
-        /* Links for login/register when user is not logged in */
-        .auth-links a {
-            margin: 0 10px;
-            padding: 10px 25px;
-            border-radius: 25px;
-            background: linear-gradient(135deg, #36A2EB, #1f7ac3);
-            color: white;
-            text-decoration: none;
-            font-weight: bold;
-            transition: 0.3s;
-        }
+    /* Hamburger Icon */
+    .menu-toggle {
+      display: none;
+      font-size: 26px;
+      cursor: pointer;
+      color: white;
+      background: rgba(255,255,255,0.1);
+      padding: 6px 12px;
+      border-radius: 8px;
+      transition: 0.3s;
+    }
 
-        .auth-links a:hover {
-            background: linear-gradient(135deg, #1f7ac3, #36A2EB);
-            transform: scale(1.05);
-        }
+    .menu-toggle:hover {
+      background: rgba(255,255,255,0.2);
+    }
 
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            header nav {
-                margin-top: 10px;
-            }
-        }
-    </style>
+    /* Main content area */
+    main {
+      padding: 40px 20px;
+      min-height: calc(100vh - 140px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Footer styling */
+    footer {
+      text-align: center;
+      padding: 20px;
+      background: #2c2c44;
+      font-size: 14px;
+      color: #bbb;
+      box-shadow: 0 -4px 8px rgba(0,0,0,0.3);
+    }
+
+    /* Links for login/register when user is not logged in */
+    .auth-links a {
+      margin: 0 10px;
+      padding: 10px 25px;
+      border-radius: 25px;
+      background: linear-gradient(135deg, #36A2EB, #1f7ac3);
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+
+    .auth-links a:hover {
+      background: linear-gradient(135deg, #1f7ac3, #36A2EB);
+      transform: scale(1.05);
+    }
+
+    /* ✅ Responsive Navbar */
+    @media (max-width: 768px) {
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 15px 25px;
+      }
+
+      .menu-toggle {
+        display: block;
+        align-self: flex-end;
+      }
+
+      header nav {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        margin-top: 10px;
+        background: rgba(0, 0, 0, 0.4);
+        padding: 10px 0;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+      }
+
+      header nav a {
+        width: 100%;
+        text-align: center;
+        margin: 5px 0;
+      }
+
+      header nav.active {
+        display: flex;
+        animation: fadeIn 0.3s ease;
+      }
+
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+    }
+
+    @media (max-width: 480px) {
+      header h1 {
+        font-size: 22px;
+      }
+
+      main {
+        padding: 20px 10px;
+      }
+
+      footer {
+        font-size: 12px;
+      }
+    }
+  </style>
 </head>
+
 <body>
-
-<header>
+  <header>
     <h1>MoneyArc</h1>
-    <nav>
-        <% if(session.userId){ %>
-            <a href="/expenses/dashboard">Dashboard</a>
-            <a href="/profile">Profile</a>
-            <a href="/budget">Budget</a>
-            <a href="/logout">Logout</a>
-        <% } else { %>
-            <div class="auth-links">
-                <a href="/login">Login</a>
-                <a href="/register">Register</a>
-            </div>
-        <% } %>
+    <div class="menu-toggle" id="menu-toggle">☰</div>
+    <nav id="navbar">
+      <% if (session.userId) { %>
+        <a href="/expenses/dashboard">Dashboard</a>
+        <a href="/profile">Profile</a>
+        <a href="/budget">Budget</a>
+        <a href="/profile/recommendations">AI Recommendations</a>
+        <a href="/logout">Logout</a>
+      <% } else { %>
+        <div class="auth-links">
+          <a href="/login">Login</a>
+          <a href="/register">Register</a>
+        </div>
+      <% } %>
     </nav>
-</header>
+  </header>
 
-<main>
+  <main>
     <%- body %>
-</main>
+  </main>
 
-<footer>
+  <footer>
     &copy; 2025 Financial Management System
-</footer>
+  </footer>
 
+  <script>
+    // ✅ Simple mobile menu toggle
+    document.addEventListener("DOMContentLoaded", () => {
+      const toggle = document.getElementById("menu-toggle");
+      const navbar = document.getElementById("navbar");
+      toggle.addEventListener("click", () => {
+        navbar.classList.toggle("active");
+      });
+    });
+  </script>
 </body>
 </html>

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Recommendations</title>
+  <style>
+    body {
+      background: linear-gradient(135deg, #0d0d0d, #1a1a1a);
+      font-family: 'Poppins', sans-serif;
+      color: #fff;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
+
+    .card {
+      max-width: 700px;
+      margin: 80px auto;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 4px 25px rgba(0, 0, 0, 0.5);
+    }
+
+    h2 {
+      color: #36A2EB;
+      margin-bottom: 20px;
+    }
+
+    .recommendation {
+      background: rgba(255, 255, 255, 0.08);
+      padding: 15px;
+      border-radius: 10px;
+      margin: 10px 0;
+      text-align: left;
+    }
+
+    .recommendation strong {
+      color: #36A2EB;
+    }
+
+    .btn {
+      display: inline-block;
+      margin-top: 25px;
+      padding: 10px 20px;
+      background: linear-gradient(135deg, #36A2EB, #1f7ac3);
+      color: white;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+
+    .btn:hover {
+      transform: scale(1.05);
+    }
+
+    .confidence-bar {
+      width: 100%;
+      background: #333;
+      border-radius: 10px;
+      margin-top: 10px;
+      height: 12px;
+      overflow: hidden;
+    }
+
+    .confidence-fill {
+      height: 100%;
+      background: #36A2EB;
+      border-radius: 10px;
+      transition: width 0.5s ease;
+    }
+
+    .meta {
+      margin-top: 12px;
+      font-size: 14px;
+      color: #cfcfcf;
+    }
+
+    /* ✅ Responsive Design */
+    @media (max-width: 1024px) {
+      .card {
+        max-width: 85%;
+        padding: 25px;
+        margin: 60px auto;
+      }
+      h2 {
+        font-size: 22px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .card {
+        max-width: 90%;
+        padding: 20px;
+        margin: 40px auto;
+      }
+
+      .recommendation {
+        padding: 12px;
+        font-size: 14px;
+      }
+
+      .recommendation strong {
+        display: inline-block;
+        margin-right: 5px;
+      }
+
+      h2 {
+        font-size: 20px;
+        margin-bottom: 15px;
+      }
+
+      .btn {
+        width: 90%;
+        padding: 12px;
+        font-size: 15px;
+      }
+
+      .meta {
+        font-size: 13px;
+      }
+
+      .confidence-bar {
+        height: 10px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 10px;
+      }
+
+      .card {
+        width: 95%;
+        padding: 15px;
+        margin: 30px auto;
+      }
+
+      h2 {
+        font-size: 18px;
+      }
+
+      .recommendation {
+        font-size: 13px;
+        padding: 10px;
+      }
+
+      .btn {
+        width: 100%;
+        padding: 10px;
+        font-size: 14px;
+      }
+
+      .meta {
+        font-size: 12px;
+      }
+
+      .confidence-bar {
+        height: 8px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="card">
+    <h2>💡 AI Financial Recommendation</h2>
+
+    <% 
+      // ✅ Safe confidence calculation
+      let confidence = 0;
+      if (parsed && typeof parsed.confidence !== 'undefined') {
+        const val = Number(parsed.confidence);
+        confidence = isNaN(val) ? 0 : Math.min(Math.max(val, 0), 100);
+      }
+    %>
+
+    <% if (message) { %>
+      <p><%= message %></p>
+
+    <% } else if (parsed && parsed.recommendations && parsed.recommendations.length > 0) { %>
+      <% parsed.recommendations.forEach(function(r) { %>
+        <div class="recommendation">
+          <p><strong>Action:</strong> <%= r.action || 'N/A' %></p>
+          <p><strong>Target:</strong> <%= r.target || 'N/A' %></p>
+          <p><strong>Allocation:</strong> <%= (r.amount_pct != null) ? r.amount_pct + '%' : 'N/A' %></p>
+          <p><strong>Rationale:</strong> <%= r.rationale || 'No rationale provided.' %></p>
+        </div>
+      <% }); %>
+
+      <div class="meta">
+        <p><strong>Confidence:</strong> <%= confidence %>%</p>
+        <div class="confidence-bar">
+          <div class="confidence-fill" style="width:<%= confidence %>%"></div>
+        </div>
+        <p style="margin-top:10px;">
+          <strong>Date:</strong> <%= new Date(rec.created_at).toDateString() %>
+        </p>
+        <p><em><%= parsed.notes || '' %></em></p>
+      </div>
+
+    <% } else { %>
+      <p>No structured recommendations found.</p>
+    <% } %>
+
+    <a href="/profile" class="btn">← Back to Profile</a>
+  </div>
+</body>
+</html>
