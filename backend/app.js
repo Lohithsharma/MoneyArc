@@ -85,15 +85,13 @@ passport.use(
           console.log(`🧍 New user created: ${user.email}`);
         }
 
-        // Generate AI recommendation for new users
-        if (isNewUser) {
-          console.log(`🧠 Generating first AI recommendation for ${user.email}...`);
-          try {
-            await generateAndSaveRecommendation(user);
-            console.log(`✅ First AI recommendation saved for ${user.email}`);
-          } catch (err) {
-            console.error(`❌ AI generation failed:`, err.message);
-          }
+        // ✅ Generate AI recommendation on first login
+        console.log(`🧠 Generating AI recommendation for ${user.email}...`);
+        try {
+          await generateAndSaveRecommendation(user);
+          console.log(`✅ AI recommendation saved for ${user.email}`);
+        } catch (err) {
+          console.error(`❌ AI generation failed for ${user.email}:`, err.message);
         }
 
         done(null, user);
@@ -152,25 +150,61 @@ app.get("/profile/recommendations", async (req, res) => {
   }
 });
 
-// ✅ Hourly Cron Job for Auto AI Generation
+// ✅ Hourly Cron Job for Auto AI Generation (Non-blocking & Timezone Safe)
 async function runForAllUsers() {
   try {
     const users = (await pool.query("SELECT * FROM users")).rows;
     console.log(`🧠 Running AI recommendations for ${users.length} users...`);
+
     for (const u of users) {
-      await generateAndSaveRecommendation(u);
+      try {
+        console.log(`⚡ Generating recommendation for: ${u.email}`);
+        await generateAndSaveRecommendation(u);
+        console.log(`✅ Saved AI recommendation for ${u.email}`);
+        await new Promise((r) => setTimeout(r, 2000)); // small delay for Render stability
+      } catch (err) {
+        console.error(`❌ Failed for ${u.email}:`, err.message);
+      }
     }
+
+    console.log("✅ Hourly AI recommendation cycle completed successfully");
   } catch (err) {
-    console.error("Error during cron job:", err.message);
+    console.error("❌ Error during cron job:", err.message);
   }
 }
 
-cron.schedule("0 * * * *", () => {
-  console.log("⏰ Hourly AI generation started...");
-  runForAllUsers();
+// 🕒 Schedule Cron (Runs Every Hour in IST, Non-blocking)
+cron.schedule(
+  "0 * * * *",
+  async () => {
+    console.log("⏰ Hourly AI generation started at:", new Date().toISOString());
+    setTimeout(async () => {
+      try {
+        await runForAllUsers();
+        console.log("✅ Hourly AI generation finished successfully");
+      } catch (err) {
+        console.error("❌ Hourly AI generation failed:", err.message);
+      }
+    }, 100);
+  },
+  {
+    timezone: "Asia/Kolkata", // ensure correct local time
+  }
+);
+
+// ✅ Manual Test Route (Run Cron Anytime)
+app.get("/run-cron-now", async (req, res) => {
+  console.log("🚀 Manual AI generation triggered via /run-cron-now");
+  try {
+    await runForAllUsers();
+    res.send("✅ Manual AI generation completed successfully!");
+  } catch (err) {
+    console.error("❌ Manual AI generation failed:", err.message);
+    res.status(500).send("Error running AI generation.");
+  }
 });
 
-// ✅ Manual Test AI Route
+// ✅ Manual Test AI Route (For Debug)
 app.get("/test-ai", async (req, res) => {
   try {
     const user = (await pool.query("SELECT * FROM users LIMIT 1")).rows[0];
