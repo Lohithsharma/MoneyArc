@@ -6,7 +6,6 @@ const path = require("path");
 const dotenv = require("dotenv");
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
-const cron = require("node-cron");
 const { Pool } = require("pg");
 const { generateAndSaveRecommendation } = require("./ai/advisor");
 const User = require("./models/user");
@@ -63,7 +62,7 @@ passport.deserializeUser(async (id, done) => {
   done(null, user);
 });
 
-// ✅ Google OAuth + AI Recommendation on New User
+// ✅ Google OAuth + AI Recommendation on Login
 passport.use(
   new GoogleStrategy(
     {
@@ -74,8 +73,6 @@ passport.use(
     async (accessToken, refreshToken, profile, done) => {
       try {
         let user = await User.findByEmail(profile.emails[0].value);
-        const isNewUser = !user;
-
         if (!user) {
           user = await User.create(
             profile.displayName,
@@ -85,11 +82,11 @@ passport.use(
           console.log(`🧍 New user created: ${user.email}`);
         }
 
-        // ✅ Generate AI recommendation on first login
-        console.log(`🧠 Generating AI recommendation for ${user.email}...`);
+        // ✅ Always generate a fresh AI recommendation on login
+        console.log(`🧠 Generating new AI recommendation for ${user.email} on login...`);
         try {
           await generateAndSaveRecommendation(user);
-          console.log(`✅ AI recommendation saved for ${user.email}`);
+          console.log(`✅ New login-based recommendation saved for ${user.email}`);
         } catch (err) {
           console.error(`❌ AI generation failed for ${user.email}:`, err.message);
         }
@@ -135,7 +132,6 @@ app.get("/profile/recommendations", async (req, res) => {
       });
     }
 
-    // ✅ Safely parse stored JSON
     let parsed;
     try {
       parsed = typeof rec.details === "object" ? rec.details : JSON.parse(rec.details || "{}");
@@ -150,53 +146,12 @@ app.get("/profile/recommendations", async (req, res) => {
   }
 });
 
-// ✅ Hourly Cron Job for Auto AI Generation (Non-blocking & Timezone Safe)
-async function runForAllUsers() {
+// ✅ Manual Test Route (Optional)
+app.get("/run-ai-now", async (req, res) => {
+  console.log("🚀 Manual AI generation triggered via /run-ai-now");
   try {
     const users = (await pool.query("SELECT * FROM users")).rows;
-    console.log(`🧠 Running AI recommendations for ${users.length} users...`);
-
-    for (const u of users) {
-      try {
-        console.log(`⚡ Generating recommendation for: ${u.email}`);
-        await generateAndSaveRecommendation(u);
-        console.log(`✅ Saved AI recommendation for ${u.email}`);
-        await new Promise((r) => setTimeout(r, 2000)); // small delay for Render stability
-      } catch (err) {
-        console.error(`❌ Failed for ${u.email}:`, err.message);
-      }
-    }
-
-    console.log("✅ Hourly AI recommendation cycle completed successfully");
-  } catch (err) {
-    console.error("❌ Error during cron job:", err.message);
-  }
-}
-
-// 🕒 Schedule Cron (Runs Every Hour in IST, Non-blocking)
-cron.schedule(
-  "0 * * * *",
-  async () => {
-    console.log("⏰ Hourly AI generation started at:", new Date().toISOString());
-    setTimeout(async () => {
-      try {
-        await runForAllUsers();
-        console.log("✅ Hourly AI generation finished successfully");
-      } catch (err) {
-        console.error("❌ Hourly AI generation failed:", err.message);
-      }
-    }, 100);
-  },
-  {
-    timezone: "Asia/Kolkata", // ensure correct local time
-  }
-);
-
-// ✅ Manual Test Route (Run Cron Anytime)
-app.get("/run-cron-now", async (req, res) => {
-  console.log("🚀 Manual AI generation triggered via /run-cron-now");
-  try {
-    await runForAllUsers();
+    for (const u of users) await generateAndSaveRecommendation(u);
     res.send("✅ Manual AI generation completed successfully!");
   } catch (err) {
     console.error("❌ Manual AI generation failed:", err.message);
@@ -204,18 +159,6 @@ app.get("/run-cron-now", async (req, res) => {
   }
 });
 
-// ✅ Manual Test AI Route (For Debug)
-app.get("/test-ai", async (req, res) => {
-  try {
-    const user = (await pool.query("SELECT * FROM users LIMIT 1")).rows[0];
-    if (!user) return res.send("❌ No users found.");
-    const result = await generateAndSaveRecommendation(user);
-    res.send(`<pre>${JSON.stringify(result.parsed, null, 2)}</pre>`);
-  } catch (err) {
-    res.status(500).send("❌ Error: " + err.message);
-  }
-});
-
 // ✅ Server Start
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`🚀 Server running at http://localhost:${PORT}`));
+app.listen(PORT, () => console.log(`🚀 Web server running at http://localhost:${PORT}`));
