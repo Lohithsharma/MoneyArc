@@ -122,7 +122,7 @@
       }
     }
 
-    /* ✅ MOBILE FIX — Fully visible quote with fade-in */
+    /* ✅ MOBILE FIX — Shorter quote + fade-in */
     @media (max-width: 768px) {
       .container {
         padding: 15px;
@@ -135,17 +135,25 @@
       }
 
       .hero-quote {
+        position: relative;
         font-size: 18px;
         text-align: center;
-        white-space: normal;      /* Allow text wrapping */
-        overflow: visible;        /* Prevent text cutoff */
-        border: none;             /* Remove typing cursor */
-        width: 100%;              /* Use full width */
+        white-space: normal;
+        overflow: visible;
+        border: none;
+        width: 100%;
         max-width: 90%;
-        animation: fadeIn 2s ease-in-out;  /* Smooth fade instead of typing */
+        animation: fadeIn 2s ease-in-out;
         opacity: 0;
         animation-fill-mode: forwards;
         margin: 0 auto 20px;
+        color: transparent; /* hide original desktop quote */
+      }
+
+      .hero-quote::after {
+        content: "'Manage your money wisely and achieve freedom.'";
+        color: white;
+        text-shadow: 2px 2px 15px rgba(0,0,0,0.7);
       }
 
       @keyframes fadeIn {
@@ -163,7 +171,7 @@
         width: 80%;
         margin: 0 auto;
         justify-content: center;
-        opacity: 1; /* Ensure buttons always visible on mobile */
+        opacity: 1;
       }
     }
 
